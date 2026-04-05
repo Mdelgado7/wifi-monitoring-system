@@ -46,24 +46,19 @@ def metrics():
     signal = safe_float(data.get("signal", 0))
     latency = safe_float(data.get("latency", 0))
     dns = safe_float(data.get("dns", 0))
-    throughput = safe_float(data.get("throughput", 0))
+    throughput_in = safe_float(data.get("throughput_in", 0))
+    throughput_out = safe_float(data.get("throughput_out", 0))
 
     output = f"""
-# HELP wifi_signal_dbm WiFi signal strength in dBm
-# TYPE wifi_signal_dbm gauge
 wifi_signal_dbm {signal}
 
-# HELP wifi_latency_ms Ping latency in ms
-# TYPE wifi_latency_ms gauge
 wifi_latency_ms {latency}
 
-# HELP wifi_dns_ms DNS lookup time in ms
-# TYPE wifi_dns_ms gauge
 wifi_dns_ms {dns}
 
-# HELP wifi_throughput_kbps Network throughput
-# TYPE wifi_throughput_kbps gauge
-wifi_throughput_kbps {throughput}
+wifi_throughput_in_kBps {throughput_in}
+
+wifi_throughput_out_kBps {throughput_out}
 """
 
     return Response(output, mimetype="text/plain")
