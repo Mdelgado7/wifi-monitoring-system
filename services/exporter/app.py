@@ -1,36 +1,72 @@
-from flask import Flask, jsonify
+from flask import Flask, Response
 
 app = Flask(__name__)
 
 LOG_FILE = "/logs/metrics.log"
 
+
 def parse_latest():
     try:
         with open(LOG_FILE, "r") as f:
-            lines = f.readlines()
+            content = f.read()
 
-        # Get last block
-        block = []
-        for line in reversed(lines):
-            if line.strip() == "---":
-                break
-            block.append(line.strip())
+        # Split into blocks
+        blocks = content.strip().split('---')
 
-        block.reverse()
+        # Get the last FULL block (ignore trailing empty)
+        latest = blocks[-2].strip() if len(blocks) > 1 else ""
+
+        lines = latest.split("\n")
 
         data = {}
-        for line in block:
+        for line in lines:
             if "=" in line:
                 key, val = line.split("=", 1)
-                data[key] = val.strip()
+                data[key.strip()] = val.strip()
+
+        print("PARSED BLOCK:", latest)
+        print("PARSED DATA:", data)
 
         return data
 
+    except Exception as e:
+        print("ERROR:", e)
+        return {}
+
+def safe_float(val):
+    try:
+        return float(val)
     except:
-        return {"error": "no data yet"}
+        return 0
 
 @app.route("/metrics")
 def metrics():
-    return jsonify(parse_latest())
+    data = parse_latest()
 
-app.run(host="0.0.0.0", port=8000)
+    signal = safe_float(data.get("signal", 0))
+    latency = safe_float(data.get("latency", 0))
+    dns = safe_float(data.get("dns", 0))
+    throughput = safe_float(data.get("throughput", 0))
+
+    output = f"""
+# HELP wifi_signal_dbm WiFi signal strength in dBm
+# TYPE wifi_signal_dbm gauge
+wifi_signal_dbm {signal}
+
+# HELP wifi_latency_ms Ping latency in ms
+# TYPE wifi_latency_ms gauge
+wifi_latency_ms {latency}
+
+# HELP wifi_dns_ms DNS lookup time in ms
+# TYPE wifi_dns_ms gauge
+wifi_dns_ms {dns}
+
+# HELP wifi_throughput_kbps Network throughput
+# TYPE wifi_throughput_kbps gauge
+wifi_throughput_kbps {throughput}
+"""
+
+    return Response(output, mimetype="text/plain")
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000)
