@@ -26,7 +26,10 @@ do
 
         echo "gateway=$(ip route | grep default | awk '{print $3}')"
 
-        echo "throughput=$(ifstat -i $INTERFACE 1 1 | tail -1 | awk '{print $1}')"
+	read in out <<< $(ifstat -i $INTERFACE 1 1 | tail -1 | awk '{print $1, $2}')
+
+	echo "throughput_in=$in"
+	echo "throughput_out=$out"
 
         echo "---"
     } >> $LOG_FILE
