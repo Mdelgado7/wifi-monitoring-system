@@ -8,6 +8,21 @@ services:
     volumes:
       - ./logs:/logs
 
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./influxdb/data:/var/lib/influxdb2:rw
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=mysecretpassword123
+      - DOCKER_INFLUXDB_INIT_ORG=CSUCI
+      - DOCKER_INFLUXDB_INIT_BUCKET=WifiData
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=mysecrettoken123
+
   exporter:
     build: ./services/exporter
     container_name: exporter
@@ -15,14 +30,23 @@ services:
       - "8000:8000"
     volumes:
       - ./logs:/logs
+    environment:
+      - INFLUXDB_URL=http://influxdb:8086
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=mysecrettoken123
+      - DOCKER_INFLUXDB_INIT_ORG=CSUCI
+      - DOCKER_INFLUXDB_INIT_BUCKET=WifiData
+    depends_on:
+      - influxdb
 
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:latest
     container_name: prometheus
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+    depends_on:
+      - exporter
 
   grafana:
     image: grafana/grafana
@@ -32,3 +56,6 @@ services:
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
       - ./grafana/dashboards:/var/lib/grafana/dashboards
+    depends_on:
+      - influxdb
+      - prometheus

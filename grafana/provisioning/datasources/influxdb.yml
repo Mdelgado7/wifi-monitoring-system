@@ -1,0 +1,15 @@
+apiVersion: 1
+
+datasources:
+  - name: InfluxDB_WifiData
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    jsonData:
+      version: Flux
+      organization: CSUCI
+      defaultBucket: WifiData
+      tlsSkipVerify: true
+    secureJsonData:
+      token: mysecrettoken123 # Must match DOCKER_INFLUXDB_INIT_ADMIN_TOKEN
+    isDefault: false
