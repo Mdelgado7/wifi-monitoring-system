@@ -1,12 +1,12 @@
-========================================================================
-# README.txt
-# Authors: Martin Delgado & Izzy Garcia
-# Capstone Project: Multi-Point Wi-Fi Monitoring and Spatial Heat-Mapping System
-# Description: This git repository hosts the docker configurations and 
-#              docker compose files to create the project environment. 
-#              The software used are the following: Grafana, InfluxDB, 
-#              Docker, and Python data collection scripts.
-========================================================================
+==================================================================================
+# README.txt                                                                     #
+# Authors: Martin Delgado & Izzy Garcia                                          #
+# Capstone Project: Multi-Point Wi-Fi Monitoring and Spatial Heat-Mapping System #
+# Description: This git repository hosts the docker configurations and           #
+#              docker compose files to create the project environment.           #
+#              The software used are the following: Grafana, InfluxDB,           #
+#              Docker, and Python data collection scripts.                       #
+==================================================================================
 
 --- Prerequisites ---
 Before cloning and running this project, you must have Docker and Docker 
@@ -56,4 +56,4 @@ To inspect the live output logs of your Wi-Fi data pipeline and database:
   - InfluxDB UI: http://localhost:8086 (or http://<pi_ip_address>:8086)
   - Prometheus Query Builder:  http://localhost:9090 (or http://<pi_ip>:9090)
   - Wi-Fi Exporter Metrics:   http://localhost:8000 (or http://<pi_ip>:8000)
-========================================================================
+==============================================================================
