@@ -46,7 +46,7 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
+        "w": 3,
         "x": 0,
         "y": 0
       },
@@ -121,8 +121,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 4,
+        "w": 3,
+        "x": 3,
         "y": 0
       },
       "id": 1,
@@ -178,6 +178,77 @@
               },
               {
                 "color": "#EAB839",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 3,
+        "x": 6,
+        "y": 0
+      },
+      "id": 10,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P1055CE8570FAE006"
+          },
+          "query": "from(bucket: \"WifiData\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"wifi_telemetry\")\r\n  |> filter(fn: (r) => r[\"session_id\"] == \"${Session}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"cpu_usage_percent\")\r\n  |> keep(columns: [\"_time\", \"_value\"])",
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Usage",
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P1055CE8570FAE006"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "#EAB839",
                 "value": 75
               },
               {
@@ -192,8 +263,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 8,
+        "w": 5,
+        "x": 9,
         "y": 0
       },
       "id": 7,
@@ -246,6 +317,86 @@
           "color": {
             "mode": "thresholds"
           },
+          "displayName": "Frontier_805",
+          "mappings": [],
+          "max": -30,
+          "min": -90,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": -80
+              },
+              {
+                "color": "semi-dark-orange",
+                "value": -70
+              },
+              {
+                "color": "#EAB839",
+                "value": -60
+              },
+              {
+                "color": "green",
+                "value": -50
+              }
+            ]
+          },
+          "unit": "dBm"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 5,
+        "x": 14,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "minVizHeight": 257,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.4.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P1055CE8570FAE006"
+          },
+          "query": "from(bucket: \"WifiData\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"wifi_telemetry\")\r\n  |> filter(fn: (r) => r[\"session_id\"] == \"${Session}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"signal_dbm\")\r\n  |> keep(columns: [\"_time\", \"_value\"])",
+          "refId": "A"
+        }
+      ],
+      "title": "Signal Strength",
+      "transparent": true,
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P1055CE8570FAE006"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
           "mappings": [],
           "max": 100,
           "min": 0,
@@ -276,8 +427,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 4,
-        "x": 12,
+        "w": 5,
+        "x": 19,
         "y": 0
       },
       "id": 8,
@@ -323,86 +474,6 @@
           "color": {
             "mode": "thresholds"
           },
-          "displayName": "Frontier_805",
-          "mappings": [],
-          "max": -30,
-          "min": -90,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "red",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": -80
-              },
-              {
-                "color": "semi-dark-orange",
-                "value": -70
-              },
-              {
-                "color": "#EAB839",
-                "value": -60
-              },
-              {
-                "color": "green",
-                "value": -50
-              }
-            ]
-          },
-          "unit": "dBm"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 6,
-        "w": 8,
-        "x": 16,
-        "y": 0
-      },
-      "id": 2,
-      "options": {
-        "minVizHeight": 257,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "12.4.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "influxdb",
-            "uid": "P1055CE8570FAE006"
-          },
-          "query": "from(bucket: \"WifiData\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"wifi_telemetry\")\r\n  |> filter(fn: (r) => r[\"session_id\"] == \"${Session}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"signal_dbm\")\r\n  |> keep(columns: [\"_time\", \"_value\"])",
-          "refId": "A"
-        }
-      ],
-      "title": "Signal Strength",
-      "transparent": true,
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "influxdb",
-        "uid": "P1055CE8570FAE006"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -430,7 +501,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
+        "h": 7,
         "w": 12,
         "x": 0,
         "y": 6
@@ -542,7 +613,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
+        "h": 7,
         "w": 12,
         "x": 12,
         "y": 6
@@ -641,10 +712,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 9,
         "w": 12,
         "x": 0,
-        "y": 11
+        "y": 13
       },
       "id": 9,
       "options": {
@@ -783,10 +854,10 @@
         ]
       },
       "gridPos": {
-        "h": 6,
+        "h": 9,
         "w": 12,
         "x": 12,
-        "y": 12
+        "y": 13
       },
       "id": 5,
       "options": {
@@ -837,8 +908,8 @@
     "list": [
       {
         "current": {
-          "text": "session_20260509_072817",
-          "value": "session_20260509_072817"
+          "text": "session_20260511_050235",
+          "value": "session_20260511_050235"
         },
         "datasource": {
           "type": "influxdb",

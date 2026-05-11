@@ -40,6 +40,10 @@ To inspect the live output logs of your Wi-Fi data pipeline and database:
 
   sudo docker compose logs -f
 
+To run a stress test for the hardware and see it reflect on our (cool) grafana dashboard:
+  chmod u+x pi_stress_test.sh (current working directory matches directory of file)
+  ./pi_stress_test.sh 
+
 
 --- Troubleshooting Quick Reference ---
 * To stop the system: 

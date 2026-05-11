@@ -28,6 +28,43 @@ except Exception as e:
 SESSION_ID = f"session_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
 print(f"[*] Starting Exporter App. Active session ID: {SESSION_ID}")
 
+def get_actual_host_cpu():
+    """
+    Calculates host CPU utilization % by measuring the delta 
+    in /proc/stat CPU ticks over a 1-second interval.
+    """
+    try:
+        if not os.path.exists("/proc/stat"):
+            return 0.0
+
+        def read_cpu_ticks():
+            with open("/proc/stat", "r") as f:
+                first_line = f.readline()
+            parts = first_line.split()
+            # Sum up all CPU ticks (user, nice, system, idle, iowait, irq, softirq, steal)
+            ticks = [float(x) for x in parts[1:5]] # user, nice, system, idle
+            total_ticks = sum(ticks)
+            idle_ticks = ticks[3] # Index 3 is idle time
+            return total_ticks, idle_ticks
+
+        # Snapshot 1
+        total1, idle1 = read_cpu_ticks()
+        time.sleep(1.0)
+        # Snapshot 2
+        total2, idle2 = read_cpu_ticks()
+
+        # Calculate the differences
+        total_delta = total2 - total1
+        idle_delta = idle2 - idle1
+
+        if total_delta > 0:
+            # CPU Usage = 100 * (1 - IdleDelta / TotalDelta)
+            cpu_percent = (1.0 - (idle_delta / total_delta)) * 100.0
+            return round(cpu_percent, 2)
+    except Exception as e:
+        print(f"[!] Error calculating host CPU in Python: {e}")
+    return 0.0
+
 def get_actual_host_ram():
     """
     Reads /proc/meminfo directly from the host system mount
@@ -135,6 +172,7 @@ def influx_writer_loop():
                     cpu_temp = safe_float(data.get("cpu_temp", 0))
                     uptime = safe_float(data.get("uptime", 0))
                     ram_usage = get_actual_host_ram()
+                    cpu_usage = get_actual_host_cpu()
 
                     # Construct InfluxDB Point
                     point = (
@@ -154,6 +192,7 @@ def influx_writer_loop():
                         .field("cpu_temp_celsius", cpu_temp)
                         .field("uptime_seconds", uptime)
                         .field("ram_usage_percent", ram_usage)
+                        .field("cpu_usage_percent", cpu_usage)
                     )
 
                     write_api.write(bucket=INFLUX_BUCKET, org=INFLUX_ORG, record=point)
@@ -186,6 +225,7 @@ def metrics():
     cpu_temp = safe_float(data.get("cpu_temp", 0))
     uptime = safe_float(data.get("uptime", 0))
     ram_usage = get_actual_host_ram()
+    cpu_usage = get_actual_host_cpu()
 
     output = f"""# HELP wifi_signal_dbm WiFi Signal Strength in dBm
 # TYPE wifi_signal_dbm gauge
@@ -222,6 +262,10 @@ pi_uptime_seconds {uptime}
 # HELP pi_ram_usage_percent Memory utilization percentage
 # TYPE pi_ram_usage_percent gauge
 pi_ram_usage_percent {ram_usage}
+
+# HELP pi_cpu_usage_percent CPU core load utilization percentage
+# TYPE pi_cpu_usage_percent gauge
+pi_cpu_usage_percent {cpu_usage}
 """
     return Response(output, mimetype="text/plain")
 
